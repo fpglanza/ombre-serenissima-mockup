@@ -209,15 +209,15 @@
       game.risorse.oggetti.length || game.risorse.indizi.length || game.risorse.alleati.length ||
       game.risorse.denaro || game.risorse.fama;
 
-    // HUD visibile dopo l’intro (e quando c’è qualcosa da mostrare)
     const show = (current && current.id !== START_NODE) && (anyIdentity || hasAnyResource);
 
-    // Niente più display:none: usiamo classi per l’animazione
-    els.hud.classList.toggle("is-visible", !!show);
+    // se non dobbiamo mostrarlo, lo nascondiamo (fade out)
+    if(!show){
+      els.hud.classList.remove("is-visible");
+      return;
+    }
 
-    // Se non visibile, non serve aggiornare contenuto
-    if(!show) return;
-
+    // contenuto
     const identita = [];
     if(player.sex) identita.push(`<span class="hudItem">Sesso: <strong>${player.sex}</strong></span>`);
     if(player.ceto) identita.push(`<span class="hudItem">Ceto: <strong>${player.ceto}</strong></span>`);
@@ -234,23 +234,25 @@
     margine.push(`<span class="hudItem"><strong>Margine: ${Math.max(0, game.vite)}/${game.viteMax}</strong></span>`);
 
     els.hud.innerHTML = `
-      <div class="hudGrid">
-        <div class="hudBlock">
-          <div class="hudTitle">Identità</div>
-          <div class="hudRow">${identita.join("") || `<span class="hudItem"><strong>—</strong></span>`}</div>
-        </div>
+      <div class="hudBlock">
+        <div class="hudTitle">Identità</div>
+        <div class="hudRow">${identita.join("") || `<span class="hudItem"><strong>—</strong></span>`}</div>
+      </div>
 
-        <div class="hudBlock">
-          <div class="hudTitle">Risorse</div>
-          <div class="hudRow">${risorse.join("")}</div>
-        </div>
+      <div class="hudBlock">
+        <div class="hudTitle">Risorse</div>
+        <div class="hudRow">${risorse.join("")}</div>
+      </div>
 
-        <div class="hudBlock">
-          <div class="hudTitle">Margine</div>
-          <div class="hudRow">${margine.join("")}</div>
-        </div>
+      <div class="hudBlock">
+        <div class="hudTitle">Margine</div>
+        <div class="hudRow">${margine.join("")}</div>
       </div>
     `;
+
+    // ✅ fade-in garantito: togli classe, poi rimettila nel frame successivo
+    els.hud.classList.remove("is-visible");
+    requestAnimationFrame(() => els.hud.classList.add("is-visible"));
   }
 
   function renderEnding(node){
