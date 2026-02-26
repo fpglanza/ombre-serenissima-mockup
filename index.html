@@ -240,6 +240,27 @@
       cursor:not-allowed;
       transform:none;
     }
+
+    /* HUD */
+    #hud{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      border-radius: 14px;
+      padding: 10px 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    #hud strong{ color: var(--ink); font-weight: 600; }
+    #hud .hudRow{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    #hud .hudItem{
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(0,0,0,.10);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
   </style>
 </head>
 <body>
@@ -260,6 +281,8 @@
             <h2 id="scene-name">Introduzione</h2>
             <div class="progress" id="progress">0 / 4</div>
           </div>
+
+          <div id="hud" style="margin-top:10px;display:none"></div>
 
           <p class="text" id="scene-text"></p>
 
@@ -306,367 +329,8 @@
     </section>
   </div>
 
-  <script>
-    // --- STATO ---
-    const player = {
-      sex: null,     // "uomo" | "donna"
-      ceto: null,    // "patrizio" | "popolano"
-      fazione: null, // "castellani" | "nicolotti"
-    };
-
-    // --- NARRATIVA ---
-    const story = {
-      intro: {
-        id: "intro",
-        name: "Introduzione",
-        text:
-          "Un prototipo narrativo a bivi ambientato nella Venezia della Serenissima. " +
-          "Potere, simboli e zone d’ombra tra storia e interpretazione.\n\n" +
-          "Questo mockup mostra il ritmo dell’esperienza: ingresso, creazione del personaggio, scelte, tre esiti possibili.",
-        choices: [] // nessuna scelta: solo tasto Inizia
-      },
-
-      character: {
-        id: "character",
-        name: "Creazione del personaggio",
-        custom: "character",
-        text:
-          "Prima di entrare in scena, scegli da quale punto della città guardare gli eventi. " +
-          "Le differenze non cambiano drasticamente la trama: colorano la tua posizione, il modo in cui vieni letto, le ombre che ti seguono.",
-        next: "start"
-      },
-
-      start: {
-        id: "start",
-        name: "Sotto le arcate",
-        useFlavor: true,
-        text:
-          "È tardi. La luce si frange sui masegni umidi e Venezia sembra ascoltare. " +
-          "Un messaggero ti consegna un sigillo: non è un invito, è una convocazione.\n\n" +
-          "La città ha molte facce. Stasera ti chiede di scegliere da quale entrare.",
-        choices: [
-          { label: "Seguire il Canal Grande fino a Palazzo", hint: "Via ufficiale, regole chiare.", next: "palazzo" },
-          { label: "Tagliare per calli e campielli, senza farsi notare", hint: "Via obliqua, orecchio alla città.", next: "calli" },
-        ],
-      },
-
-      palazzo: {
-        id: "palazzo",
-        name: "Anticamera del potere",
-        useFlavor: true,
-        text:
-          "Nel silenzio dell’anticamera, l’aria sa di cera e tessuti pesanti. " +
-          "Un funzionario ti osserva come si osserva un documento: cercando il timbro giusto.\n\n" +
-          "Sul tavolo, due oggetti: una mappa commerciale e un piccolo amuleto d’osso.",
-        choices: [
-          { label: "Aprire la mappa e chiedere un nome", hint: "Vai al nodo politico.", next: "politica" },
-          { label: "Toccare l’amuleto e ascoltare cosa “risponde”", hint: "Vai al nodo simbolico.", next: "simbolo" },
-        ],
-      },
-
-      calli: {
-        id: "calli",
-        name: "La città laterale",
-        useFlavor: true,
-        text:
-          "Ti muovi dove Venezia non posa lo sguardo ufficiale. Una porta socchiusa, una scala che non porta “da nessuna parte”. " +
-          "In un cortile interno, qualcuno ha tracciato segni sul muro: sembrano indicazioni, o avvertimenti.\n\n" +
-          "Una voce: “Se vuoi capire, decidi cosa sei disposto a perdere.”",
-        choices: [
-          { label: "Entrare comunque: cercare chi guida questo percorso", hint: "Vai al nodo politico.", next: "politica" },
-          { label: "Restare fuori: decifrare i segni e costruire una lettura", hint: "Vai al nodo simbolico.", next: "simbolo" },
-        ],
-      },
-
-      politica: {
-        id: "politica",
-        name: "Il patto",
-        useFlavor: true,
-        text:
-          "Ti viene proposta una verità spendibile: ordinata, utile, convincente. " +
-          "Ma ogni verità, qui, ha un prezzo che non compare nei registri.\n\n" +
-          "Puoi accettare il patto e diventare parte del meccanismo — oppure rifiutare e restare libero, ma invisibile.",
-        choices: [
-          { label: "Accettare il patto", hint: "Finale 1: Ingranaggio.", next: "end_ingranaggio" },
-          { label: "Rifiutare e uscire", hint: "Finale 2: Soglia.", next: "end_soglia" },
-        ],
-      },
-
-      simbolo: {
-        id: "simbolo",
-        name: "Il segno",
-        useFlavor: true,
-        text:
-          "La città parla per simboli: non dicono cosa pensare, ma come guardare. " +
-          "Ti accorgi che alcuni luoghi sono montati come un film: inquadrature, attese, ellissi.\n\n" +
-          "Se segui il segno fino in fondo, rischi di cambiare prospettiva per sempre.",
-        choices: [
-          { label: "Seguire il segno fino al punto cieco", hint: "Finale 3: Camera Oscura.", next: "end_cameraoscura" },
-          { label: "Spezzare il percorso e tornare indietro", hint: "Finale 2: Soglia.", next: "end_soglia" },
-        ],
-      },
-
-      end_ingranaggio: {
-        id: "end_ingranaggio",
-        name: "Finale — Ingranaggio",
-        ending: true,
-        resultTitle: "Ingranaggio",
-        resultText:
-          "Accetti. Il sistema ti riconosce: ti concede accesso e ti chiede in cambio fedeltà al suo ritmo. " +
-          "Venezia ti apre una porta… e ne chiude altre, senza rumore.",
-      },
-
-      end_soglia: {
-        id: "end_soglia",
-        name: "Finale — Soglia",
-        ending: true,
-        resultTitle: "Soglia",
-        resultText:
-          "Ti sottrai. Non c’è applauso, né condanna: solo la sensazione di aver evitato una narrazione già scritta. " +
-          "Rimani sulla soglia, dove la città è più vera perché non ti deve convincere.",
-      },
-
-      end_cameraoscura: {
-        id: "end_cameraoscura",
-        name: "Finale — Camera Oscura",
-        ending: true,
-        resultTitle: "Camera Oscura",
-        resultText:
-          "Segui il segno fino al punto cieco. Non trovi “la risposta”, trovi un dispositivo: " +
-          "una nuova regia dello sguardo. Da qui, ogni storia è un montaggio — e tu sei dentro l’inquadratura.",
-      },
-    };
-
-    // Progressione: character -> start -> nodo2 -> nodo3 -> finale = 5
-    const TOTAL_STEPS = 5;
-
-    const els = {
-      name: document.getElementById("scene-name"),
-      text: document.getElementById("scene-text"),
-      custom: document.getElementById("custom"),
-      choices: document.getElementById("choices"),
-      progress: document.getElementById("progress"),
-      startBtn: document.getElementById("startBtn"),
-      restartBtn: document.getElementById("restartBtn"),
-      log: document.getElementById("log"),
-      logList: document.getElementById("logList"),
-      endingBox: document.getElementById("ending-box"),
-      aside: document.getElementById("aside"),
-    };
-
-    let path = [];
-    let current = story.intro;
-
-    function pronome(){
-      // semplice, senza iper-correzioni: flavour, non grammatica perfetta
-      if(player.sex === "donna") return "Sei una donna";
-      if(player.sex === "uomo") return "Sei un uomo";
-      return "Sei qualcuno";
-    }
-
-    function flavorLine(){
-      const parts = [];
-      if(player.sex) parts.push(pronome().toLowerCase());
-      if(player.ceto) parts.push(player.ceto);
-      if(player.fazione) parts.push(player.fazione);
-      if(!parts.length) return "";
-      // es: "Sei un uomo, popolano, nicolotti."
-      const first = pronome();
-      const rest = [player.ceto, player.fazione].filter(Boolean).join(", ");
-      return rest ? `${first}, ${rest}.` : `${first}.`;
-    }
-
-    function computeProgress(node){
-      // intro non conta
-      if(node.id === "intro") return {cur: 0, total: TOTAL_STEPS};
-      if(node.id === "character") return {cur: 1, total: TOTAL_STEPS};
-      if(node.id === "start") return {cur: 2, total: TOTAL_STEPS};
-      if(node.id === "palazzo" || node.id === "calli") return {cur: 3, total: TOTAL_STEPS};
-      if(node.id === "politica" || node.id === "simbolo") return {cur: 4, total: TOTAL_STEPS};
-      if(node.ending) return {cur: 5, total: TOTAL_STEPS};
-      return {cur: 0, total: TOTAL_STEPS};
-    }
-
-    function setScene(node){
-      current = node;
-
-      // toggle aside: visibile solo in intro
-      if(els.aside){
-        els.aside.style.display = (node.id === "intro") ? "" : "none";
-      }
-
-      els.name.textContent = node.name;
-      els.custom.innerHTML = "";
-      els.choices.innerHTML = "";
-      els.endingBox.style.display = "none";
-
-      // testo (con flavour se previsto)
-      const baseText = node.text || "";
-      const fl = (node.useFlavor && (player.sex || player.ceto || player.fazione)) ? `
-
-${flavorLine()}` : "";
-      els.text.textContent = baseText + fl;
-
-      // progress
-      const p = computeProgress(node);
-      els.progress.textContent = `${p.cur} / ${p.total}`;
-
-      // bottoni start/restart
-      els.startBtn.style.display = (node.id === "intro") ? "inline-block" : "none";
-      els.restartBtn.style.display = node.ending ? "inline-block" : "none";
-
-      // ending
-      if(node.ending){
-        renderEnding(node);
-        renderLog(true);
-        return;
-      }
-
-      // custom scene: character creator
-      if(node.custom === "character"){
-        renderCharacterCreator();
-        renderLog(false);
-        return;
-      }
-
-      // normal choices
-      if(node.choices && node.choices.length){
-        node.choices.forEach((c, idx) => {
-          const btn = document.createElement("button");
-          btn.className = "choice";
-          btn.type = "button";
-          btn.innerHTML = `${c.label}<small>${c.hint || ""}</small>`;
-          btn.addEventListener("click", () => choose(idx));
-          els.choices.appendChild(btn);
-        });
-      }
-
-      renderLog(false);
-    }
-
-    function renderEnding(node){
-      els.endingBox.style.display = "block";
-      els.endingBox.innerHTML = `<strong>${node.resultTitle}</strong><div style="margin-top:6px;color:var(--muted)">${node.resultText}</div>`;
-    }
-
-    function choose(choiceIndex){
-      const choice = current.choices[choiceIndex];
-      path.push({ scene: current.name, choice: choice.label });
-      const nextNode = story[choice.next];
-      setScene(nextNode);
-    }
-
-    function renderLog(show){
-      if(!path.length){
-        els.log.style.display = "none";
-        return;
-      }
-      els.log.style.display = show ? "block" : "block";
-      els.logList.innerHTML = "";
-      path.forEach(step => {
-        const li = document.createElement("li");
-        li.textContent = `${step.scene} → ${step.choice}`;
-        els.logList.appendChild(li);
-      });
-    }
-
-    function reset(){
-      path = [];
-      player.sex = null;
-      player.ceto = null;
-      player.fazione = null;
-      setScene(story.intro);
-    }
-
-    // --- CREAZIONE PERSONAGGIO ---
-    function renderCharacterCreator(){
-      const container = document.createElement("div");
-
-      const groups = [
-        {
-          key: "sex",
-          title: "Sesso",
-          options: [
-            { value: "uomo", label: "Uomo", hint: "Accesso più “lineare” ai luoghi formali. Sguardo spesso dato per scontato." },
-            { value: "donna", label: "Donna", hint: "Presenza più ambigua per la città: ascolti, filtri, percorsi indiretti." },
-          ]
-        },
-        {
-          key: "ceto",
-          title: "Ceto",
-          options: [
-            { value: "patrizio", label: "Patrizio", hint: "Vicino ai palazzi, alle regole, ai favori. Anche alle aspettative." },
-            { value: "popolano", label: "Popolano", hint: "Vicino alle calli, alle voci, al lavoro. Anche agli sguardi altrui." },
-          ]
-        },
-        {
-          key: "fazione",
-          title: "Fazione",
-          options: [
-            { value: "castellani", label: "Castellani", hint: "Dalla parte di San Marco. Tradizione e orgoglio di sponda." },
-            { value: "nicolotti", label: "Nicolotti", hint: "Dalla parte di San Nicolò. Rivalità antiche, solidarietà di riva." },
-          ]
-        },
-      ];
-
-      groups.forEach(g => {
-        const box = document.createElement("div");
-        box.className = "optGroup";
-        box.innerHTML = `<h4>${g.title}</h4>`;
-        const grid = document.createElement("div");
-        grid.className = "optGrid";
-
-        g.options.forEach(opt => {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "optBtn";
-          btn.innerHTML = `${opt.label}<small style="display:block;color:var(--muted);margin-top:4px;font-size:12px">${opt.hint}</small>`;
-          btn.addEventListener("click", () => {
-            player[g.key] = opt.value;
-            // toggle selected
-            [...grid.querySelectorAll(".optBtn")].forEach(b => b.classList.remove("selected"));
-            btn.classList.add("selected");
-            updateContinue();
-          });
-          grid.appendChild(btn);
-        });
-
-        box.appendChild(grid);
-        container.appendChild(box);
-      });
-
-      els.custom.appendChild(container);
-
-      // Bottone continua (in area choices)
-      const cont = document.createElement("button");
-      cont.className = "choice";
-      cont.type = "button";
-      cont.disabled = true;
-      cont.innerHTML = `Entra in città<small>Prosegui con il personaggio selezionato.</small>`;
-      cont.addEventListener("click", () => {
-        path.push({ scene: "Creazione del personaggio", choice: `Sesso: ${player.sex}` });
-        path.push({ scene: "Creazione del personaggio", choice: `Ceto: ${player.ceto}` });
-        path.push({ scene: "Creazione del personaggio", choice: `Fazione: ${player.fazione}` });
-        setScene(story[story.character.next]);
-      });
-      els.choices.appendChild(cont);
-
-      function updateContinue(){
-        cont.disabled = !(player.sex && player.ceto && player.fazione);
-      }
-    }
-
-    // --- EVENTI UI ---
-    els.startBtn.addEventListener("click", () => {
-      // Primo click: entra nell'avventura (creazione personaggio) e nasconde la nota progettuale
-      setScene(story.character);
-    });
-
-    els.restartBtn.addEventListener("click", reset);
-
-    // Stato iniziale: intro senza scelte
-    setScene(story.intro);
-  </script>
+  <script src="story.js"></script>
+  <script src="engine.js"></script>
 
 </body>
 </html>
