@@ -255,6 +255,7 @@
       padding: 10px 12px;
       border-radius: 14px;
       cursor: pointer;
+      pointer-events: auto;
       font-size: 12px;
       letter-spacing: .10em;
       text-transform: uppercase;
@@ -262,6 +263,12 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
+    }
+
+    #hud .registroTab:hover{
+      border-color: rgba(255,255,255,.22);
+      background: rgba(255,255,255,.04);
+      color: var(--ink);
     }
 
     #hud .registroTab::after{
@@ -392,7 +399,7 @@
 
           <div id="hud" class="registro" aria-live="polite">
             <button id="hudToggle" class="registroTab" type="button" aria-expanded="false">
-              Registro
+              Identità
             </button>
             <div id="hudPanel" class="registroPanel"></div>
           </div>

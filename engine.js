@@ -17,6 +17,18 @@
     hud: document.getElementById("hud"),
   };
 
+  els.hudToggle = document.getElementById("hudToggle");
+  els.hudPanel  = document.getElementById("hudPanel");
+
+  if (els.hud && els.hudToggle) {
+    els.hudToggle.addEventListener("click", () => {
+      els.hud.classList.toggle("is-open");
+
+      const open = els.hud.classList.contains("is-open");
+      els.hudToggle.setAttribute("aria-expanded", String(open));
+    });
+  }
+
   const player = { sex:null, ceto:null, fazione:null };
 
   const game = {
