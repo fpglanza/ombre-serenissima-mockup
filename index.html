@@ -240,46 +240,89 @@
       cursor:not-allowed;
       transform:none;
     }
-    
-    /* HUD */
-    #hud{
-      margin-top: 16px;     /* più distanza dalla storia/scelte */
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
 
-      /* fade cinematico */
+    /* REGISTRO DIEGETICO (HUD) */
+    #hud.registro{
+      margin-top: 18px;
+      position: relative;
+    }
+
+    /* “linguetta” */
+    #hud .registroTab{
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+      padding: 10px 12px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 12px;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #hud .registroTab::after{
+      content: "▾";
+      opacity: .8;
+      transform: translateY(-1px);
+    }
+
+    /* “foglio” del registro */
+    #hud .registroPanel{
+      margin-top: 12px;
+
+      /* look parchment/registro */
+      border: 1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(800px 220px at 20% 0%, rgba(198,161,91,.10), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.12));
+      border-radius: 18px;
+      padding: 14px 14px;
+
+      /* anima apertura */
+      transform-origin: top;
+      transform: scaleY(.92) translateY(-6px);
       opacity: 0;
-      transform: translateY(-8px);
       filter: blur(2px);
-      transition: opacity .25s ease, transform .25s ease, filter .25s ease;
-      pointer-events: none;
+      max-height: 0;
+      overflow: hidden;
+
+      transition:
+        opacity .25s ease,
+        transform .25s ease,
+        filter .25s ease,
+        max-height .30s ease;
     }
 
-    #hud.is-visible{
+    /* stato aperto */
+    #hud.is-open .registroPanel{
       opacity: 1;
-      transform: translateY(0);
+      transform: scaleY(1) translateY(0);
       filter: blur(0);
-      pointer-events: auto;
+      max-height: 520px; /* abbastanza per 3 colonne */
     }
 
-    @media (min-width: 720px){
-      #hud{
-        grid-template-columns: 1fr 1fr 1fr; /* 3 colonne */
-      }
+    /* layout interno: 1–3 colonne automatiche */
+    #hud .hudGrid{
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
     }
 
     #hud .hudBlock{
-      border: 1px solid var(--line);
-      background: rgba(0,0,0,.12);
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
       border-radius: 14px;
       padding: 12px 12px;
-      min-height: 88px;
+      min-height: 92px;
     }
 
     #hud .hudTitle{
       font-size: 11px;
-      letter-spacing: .10em;
+      letter-spacing: .12em;
       text-transform: uppercase;
       color: var(--muted);
       margin: 0 0 10px 0;
@@ -295,7 +338,7 @@
 
     #hud .hudItem{
       padding: 8px 14px;
-      border: 1px solid var(--line);
+      border: 1px solid rgba(255,255,255,.10);
       border-radius: 999px;
       background: rgba(255,255,255,.03);
       color: var(--muted);
@@ -306,6 +349,11 @@
     #hud .hudItem strong{
       color: var(--ink);
       font-weight: 600;
+    }
+
+    /* micro-feedback quando cambia qualcosa */
+    #hud.pulse .registroPanel{
+      box-shadow: 0 0 0 1px rgba(198,161,91,.22), 0 18px 55px rgba(0,0,0,.35);
     }
 
   </style>
@@ -342,7 +390,12 @@
             <button class="btn" id="restartBtn" style="display:none">Ricomincia</button>
           </div>
 
-          <div id="hud"></div>
+          <div id="hud" class="registro" aria-live="polite">
+            <button id="hudToggle" class="registroTab" type="button" aria-expanded="false">
+              Registro
+            </button>
+            <div id="hudPanel" class="registroPanel"></div>
+          </div>
 
           <div class="log" id="log" style="display:none">
             <div><strong>Percorso:</strong></div>
