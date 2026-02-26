@@ -22,10 +22,12 @@
 
   if (els.hud && els.hudToggle) {
     els.hudToggle.addEventListener("click", () => {
-      els.hud.classList.toggle("is-open");
-
-      const open = els.hud.classList.contains("is-open");
-      els.hudToggle.setAttribute("aria-expanded", String(open));
+      registroOpen = !registroOpen;
+      els.hud.classList.toggle("is-open", registroOpen);
+      els.hudToggle.setAttribute(
+        "aria-expanded",
+        String(registroOpen)
+      );
     });
   }
 
@@ -47,10 +49,10 @@
 
   let current = story[START_NODE];
   let path = [];
+  let registroOpen = false;
 
   const isFn = (v) => typeof v === "function";
   const evalMaybeFn = (v, ctx) => isFn(v) ? v(ctx) : v;
-  let registroOpenedOnce = false;
 
   function uniqPush(arr, items){
     for(const it of items){
@@ -217,15 +219,14 @@
   function renderHUD(){
     if(!els.hud || !els.hudPanel) return;
 
-    const anyIdentity = player.sex || player.ceto || player.fazione;
-    const hasAnyResource =
-      game.risorse.oggetti.length || game.risorse.indizi.length || game.risorse.alleati.length ||
-      game.risorse.denaro || game.risorse.fama;
+    const show =
+      current &&
+      current.id !== START_NODE &&
+      current.id !== CHARACTER_NODE &&
+      game.tags &&
+      game.tags.size > 0;
 
-    // mostra il registro solo dopo l’intro e se ha senso mostrarlo
-    const show = (current && current.id !== START_NODE) && (anyIdentity || hasAnyResource);
-
-    els.hud.classList.toggle("is-visible", show);
+    els.hud.style.display = show ? "block" : "none";
     if(!show) return;
 
     const identita = [];
@@ -261,14 +262,11 @@
         </div>
       </div>
     `;
-
-    // auto-apri una volta dopo la creazione personaggio (se vuoi)
-    // (puoi commentare questa riga se preferisci sempre chiuso)
-    if (!registroOpenedOnce && current.id === "nodo_ingresso") {
-      registroOpenedOnce = true;
-      els.hud.classList.add("is-open");
-      if (els.hudToggle) els.hudToggle.setAttribute("aria-expanded", "true");
-    }
+    els.hud.classList.toggle("is-open", registroOpen);
+    els.hudToggle.setAttribute(
+      "aria-expanded",
+      String(registroOpen)
+    );
   }
 
   function renderEnding(node){
