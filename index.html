@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Le Ombre della Serenissima — Mockup Interattivo</title>
+  <meta name="description" content="Mockup interattivo a scelte multiple — Le Ombre della Serenissima." />
+  <style>
+    :root{
+      --bg:#0b0d12;
+      --panel:#111526;
+      --ink:#e9ecf1;
+      --muted:#b6bed0;
+      --line:rgba(255,255,255,.10);
+      --accent:#c6a15b;
+      --accent2:#7aa2ff;
+      --shadow: 0 18px 55px rgba(0,0,0,.55);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 20% 10%, rgba(122,162,255,.10), transparent 55%),
+                  radial-gradient(900px 600px at 80% 30%, rgba(198,161,91,.12), transparent 60%),
+                  var(--bg);
+      color:var(--ink);
+      line-height:1.55;
+    }
+    .wrap{
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 42px 18px 60px;
+    }
+    header{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-bottom: 18px;
+    }
+    .kicker{
+      color: var(--muted);
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-size:12px;
+    }
+    h1{
+      margin:0;
+      font-size: clamp(28px, 4.2vw, 44px);
+      letter-spacing: -0.02em;
+    }
+    .sub{
+      margin:0;
+      color: var(--muted);
+      max-width: 70ch;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:16px;
+      margin-top: 18px;
+    }
+    @media (max-width: 880px){
+      .grid{grid-template-columns: 1fr;}
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .pad{ padding: 18px 18px 16px; }
+    .meta{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .pill{
+      font-size:12px;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.02);
+    }
+    .sceneTitle{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+    .sceneTitle h2{
+      margin:0;
+      font-size:18px;
+      letter-spacing:-.01em;
+    }
+    .progress{
+      font-size:12px;
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .text{
+      margin: 0;
+      color: var(--ink);
+      font-size: 16px;
+    }
+    .choices{
+      display:grid;
+      gap:10px;
+      margin-top: 14px;
+    }
+    button.choice{
+      width:100%;
+      text-align:left;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      color: var(--ink);
+      padding: 12px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      transition: transform .08s ease, border-color .15s ease, background .15s ease;
+    }
+    button.choice:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.22);
+      background: rgba(255,255,255,.04);
+    }
+    .choice small{
+      display:block;
+      color: var(--muted);
+      margin-top:4px;
+      font-size: 12px;
+    }
+    .aside h3{
+      margin:0 0 10px 0;
+      font-size:14px;
+      color: var(--muted);
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    .aside p{
+      margin:0 0 12px 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .btn{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      color: var(--ink);
+      padding: 10px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+    }
+    .btn.primary{
+      border-color: rgba(198,161,91,.55);
+      background: linear-gradient(180deg, rgba(198,161,91,.18), rgba(198,161,91,.08));
+    }
+    .log{
+      margin-top: 10px;
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .log ol{
+      margin: 8px 0 0 18px;
+      padding:0;
+    }
+    footer{
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      opacity:.9;
+    }
+    a{ color: var(--accent2); }
+    .ending{
+      border: 1px solid rgba(198,161,91,.35);
+      background: linear-gradient(180deg, rgba(198,161,91,.12), rgba(255,255,255,.02));
+      padding: 12px 12px;
+      border-radius: 14px;
+      margin-top: 14px;
+    }
+    .ending strong{ color: #f2e6cf; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="kicker">Mockup interattivo • Scelte multiple • 3 finali</div>
+      <h1>Le Ombre della Serenissima</h1>
+      <p class="sub">
+        Un prototipo narrativo a bivi ambientato nella Venezia della Serenissima:
+        potere, simboli e zone d’ombra tra storia e interpretazione.
+      </p>
+      <div class="meta">
+        <span class="pill">Formato: web demo (monopagina)</span>
+        <span class="pill">Interazione: scelte a opzioni</span>
+        <span class="pill">Obiettivo: atmosfera + agency</span>
+      </div>
+    </header>
+
+    <section class="grid">
+      <main class="card">
+        <div class="pad">
+          <div class="sceneTitle">
+            <h2 id="scene-name">Introduzione</h2>
+            <div class="progress" id="progress">0 / 4</div>
+          </div>
+
+          <p class="text" id="scene-text"></p>
+
+          <div id="ending-box" class="ending" style="display:none"></div>
+
+          <div class="choices" id="choices"></div>
+
+          <div class="row" style="margin-top:14px">
+            <button class="btn primary" id="startBtn">Inizia</button>
+            <button class="btn" id="restartBtn" style="display:none">Ricomincia</button>
+          </div>
+
+          <div class="log" id="log" style="display:none">
+            <div><strong>Percorso:</strong></div>
+            <ol id="logList"></ol>
+          </div>
+        </div>
+      </main>
+
+      <aside class="card aside">
+        <div class="pad">
+          <h3>Nota progettuale</h3>
+          <p>
+            Questo è un <em>mockup</em>: serve a mostrare struttura, tono e dinamica di scelta.
+            L’idea può evolvere in ambiente real-time / VP, mantenendo al centro la regia dell’esperienza.
+          </p>
+
+          <h3>Come usarlo</h3>
+          <p>
+            Fai qualche run veloce e guarda come cambia la percezione degli eventi.
+            Alla fine puoi ricominciare e provare un percorso diverso.
+          </p>
+
+          <h3>Credits</h3>
+          <p>
+            Concept & design: <strong>tuo nome</strong><br/>
+            Ruolo: creative technologist (story + interazione)
+          </p>
+
+          <footer>
+            Suggerimento: caricalo su un hosting gratuito e inserisci il link nel portfolio / domanda.
+          </footer>
+        </div>
+      </aside>
+    </section>
+  </div>
+
+  <script>
+    // --- NARRATIVA: 4 passi totali, 3 finali ---
+    // Modifica liberamente testi e scelte: basta mantenere id univoci e next valido.
+    const story = {
+      start: {
+        id: "start",
+        name: "Sotto le arcate",
+        text:
+          "È tardi. La luce si frange sui masegni umidi e Venezia sembra ascoltare. " +
+          "Un messaggero ti consegna un sigillo: non è un invito, è una convocazione.\n\n" +
+          "La città ha molte facce. Stasera ti chiede di scegliere da quale entrare.",
+        choices: [
+          { label: "Seguire il Canal Grande fino a Palazzo", hint: "Via ufficiale, regole chiare.", next: "palazzo" },
+          { label: "Tagliare per calli e campielli, senza farsi notare", hint: "Via obliqua, orecchio alla città.", next: "calli" },
+        ],
+      },
+
+      palazzo: {
+        id: "palazzo",
+        name: "Anticamera del potere",
+        text:
+          "Nel silenzio dell’anticamera, l’aria sa di cera e tessuti pesanti. " +
+          "Un funzionario ti osserva come si osserva un documento: cercando il timbro giusto.\n\n" +
+          "Sul tavolo, due oggetti: una mappa commerciale e un piccolo amuleto d’osso.",
+        choices: [
+          { label: "Aprire la mappa e chiedere un nome", hint: "Vai al nodo politico.", next: "politica" },
+          { label: "Toccare l’amuleto e ascoltare cosa “risponde”", hint: "Vai al nodo simbolico.", next: "simbolo" },
+        ],
+      },
+
+      calli: {
+        id: "calli",
+        name: "La città laterale",
+        text:
+          "Ti muovi dove Venezia non posa lo sguardo ufficiale. Una porta socchiusa, una scala che non porta “da nessuna parte”. " +
+          "In un cortile interno, qualcuno ha tracciato segni sul muro: sembrano indicazioni, o avvertimenti.\n\n" +
+          "Una voce: “Se vuoi capire, decidi cosa sei disposto a perdere.”",
+        choices: [
+          { label: "Entrare comunque: cercare chi guida questo percorso", hint: "Vai al nodo politico.", next: "politica" },
+          { label: "Restare fuori: decifrare i segni e costruire una lettura", hint: "Vai al nodo simbolico.", next: "simbolo" },
+        ],
+      },
+
+      politica: {
+        id: "politica",
+        name: "Il patto",
+        text:
+          "Ti viene proposta una verità spendibile: ordinata, utile, convincente. " +
+          "Ma ogni verità, qui, ha un prezzo che non compare nei registri.\n\n" +
+          "Puoi accettare il patto e diventare parte del meccanismo — oppure rifiutare e restare libero, ma invisibile.",
+        choices: [
+          { label: "Accettare il patto", hint: "Finale 1: Ingranaggio.", next: "end_ingranaggio" },
+          { label: "Rifiutare e uscire", hint: "Finale 2: Soglia.", next: "end_soglia" },
+        ],
+      },
+
+      simbolo: {
+        id: "simbolo",
+        name: "Il segno",
+        text:
+          "La città parla per simboli: non dicono cosa pensare, ma come guardare. " +
+          "Ti accorgi che alcuni luoghi sono montati come un film: inquadrature, attese, ellissi.\n\n" +
+          "Se segui il segno fino in fondo, rischi di cambiare prospettiva per sempre.",
+        choices: [
+          { label: "Seguire il segno fino al punto cieco", hint: "Finale 3: Camera Oscura.", next: "end_cameraoscura" },
+          { label: "Spezzare il percorso e tornare indietro", hint: "Finale 2: Soglia.", next: "end_soglia" },
+        ],
+      },
+
+      end_ingranaggio: {
+        id: "end_ingranaggio",
+        name: "Finale — Ingranaggio",
+        ending: true,
+        resultTitle: "Ingranaggio",
+        resultText:
+          "Accetti. Il sistema ti riconosce: ti concede accesso e ti chiede in cambio fedeltà al suo ritmo. " +
+          "Venezia ti apre una porta… e ne chiude altre, senza rumore.",
+      },
+
+      end_soglia: {
+        id: "end_soglia",
+        name: "Finale — Soglia",
+        ending: true,
+        resultTitle: "Soglia",
+        resultText:
+          "Ti sottrai. Non c’è applauso, né condanna: solo la sensazione di aver evitato una narrazione già scritta. " +
+          "Rimani sulla soglia, dove la città è più vera perché non ti deve convincere.",
+      },
+
+      end_cameraoscura: {
+        id: "end_cameraoscura",
+        name: "Finale — Camera Oscura",
+        ending: true,
+        resultTitle: "Camera Oscura",
+        resultText:
+          "Segui il segno fino al punto cieco. Non trovi “la risposta”, trovi un dispositivo: " +
+          "una nuova regia dello sguardo. Da qui, ogni storia è un montaggio — e tu sei dentro l’inquadratura.",
+      },
+    };
+
+    const TOTAL_STEPS = 4; // start -> (palazzo/calli) -> (politica/simbolo) -> finale
+
+    const els = {
+      name: document.getElementById("scene-name"),
+      text: document.getElementById("scene-text"),
+      choices: document.getElementById("choices"),
+      progress: document.getElementById("progress"),
+      startBtn: document.getElementById("startBtn"),
+      restartBtn: document.getElementById("restartBtn"),
+      log: document.getElementById("log"),
+      logList: document.getElementById("logList"),
+      endingBox: document.getElementById("ending-box"),
+    };
+
+    let path = [];
+    let current = story.start;
+
+    function setScene(node){
+      current = node;
+      els.name.textContent = node.name;
+      els.text.textContent = node.text || "";
+      els.choices.innerHTML = "";
+      els.endingBox.style.display = "none";
+
+      // progress = numero "scene" visitate escluso intro header, contando start come 1
+      const steps = Math.min(path.length + 1, TOTAL_STEPS);
+      els.progress.textContent = `${steps} / ${TOTAL_STEPS}`;
+
+      if(node.ending){
+        els.choices.innerHTML = "";
+        els.startBtn.style.display = "none";
+        els.restartBtn.style.display = "inline-block";
+        renderEnding(node);
+        renderLog(true);
+        return;
+      }
+
+      if(node.choices && node.choices.length){
+        node.choices.forEach((c, idx) => {
+          const btn = document.createElement("button");
+          btn.className = "choice";
+          btn.type = "button";
+          btn.innerHTML = `${c.label}<small>${c.hint || ""}</small>`;
+          btn.addEventListener("click", () => choose(idx));
+          els.choices.appendChild(btn);
+        });
+      }
+
+      renderLog(false);
+    }
+
+    function renderEnding(node){
+      els.endingBox.style.display = "block";
+      els.endingBox.innerHTML = `<strong>${node.resultTitle}</strong><div style="margin-top:6px;color:var(--muted)">${node.resultText}</div>`;
+    }
+
+    function choose(choiceIndex){
+      const choice = current.choices[choiceIndex];
+      path.push({ scene: current.name, choice: choice.label });
+      const nextNode = story[choice.next];
+      setScene(nextNode);
+    }
+
+    function renderLog(show){
+      if(!path.length){
+        els.log.style.display = "none";
+        return;
+      }
+      els.log.style.display = show ? "block" : "block";
+      els.logList.innerHTML = "";
+      path.forEach(step => {
+        const li = document.createElement("li");
+        li.textContent = `${step.scene} → ${step.choice}`;
+        els.logList.appendChild(li);
+      });
+    }
+
+    function reset(){
+      path = [];
+      els.startBtn.style.display = "inline-block";
+      els.restartBtn.style.display = "none";
+      setScene(story.start);
+    }
+
+    els.startBtn.addEventListener("click", () => {
+      // Da intro: mostra già start, quindi avvia semplicemente render scena start
+      setScene(story.start);
+      els.startBtn.style.display = "none"; // poi la navigazione avviene con le scelte
+    });
+
+    els.restartBtn.addEventListener("click", reset);
+
+    // Stato iniziale: schermata “intro” con testo start
+    // (Usiamo story.start come intro stessa per semplicità)
+    setScene(story.start);
+  </script>
+</body>
+</html>
